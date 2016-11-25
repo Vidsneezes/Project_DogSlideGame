@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class GameManager : MonoBehaviour {
@@ -14,12 +15,18 @@ public class GameManager : MonoBehaviour {
         set
         {
             treatsLeft = value;
+            treatCountText.text = treatsLeft.ToString();
         }
     }
     private float treatsLeft;
 
-	private void Start () {
+    #region UI
+    public Text treatCountText;
+    #endregion
+
+    private void Start () {
         TreatsLeft = 0;
+        gridMap.gameManager = this;
         StartCoroutine(LevelEffectDelay());
 	}
 
@@ -36,7 +43,7 @@ public class GameManager : MonoBehaviour {
 	
     public void BeginWinGame()
     {
-
+        StartCoroutine(WinGameRoutine());
     }
 
     private IEnumerator WinGameRoutine()

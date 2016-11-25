@@ -171,7 +171,6 @@ public class GridMap : MonoBehaviour {
     {
         int x = Mathf.RoundToInt(position.x / horizontalSpacing);
         int y = (HeightGrid- Mathf.RoundToInt(position.y / verticalSpacing));
-        Debug.Log("X : " + x + "Y: " + y);
         return objectGrid[y, x]; //switch because x and y are inverted in matrix
     }
 
