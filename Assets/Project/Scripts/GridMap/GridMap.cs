@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class GridMap : MonoBehaviour {
 
 
-    public float HorizontalSpacing;
-    public float VerticalSpacing;
+    public float horizontalSpacing;
+    public float verticalSpacing;
+    public GameManager gameManager;
 
     private Transform groundLayer;
     public Transform GroundLayer
@@ -52,7 +54,7 @@ public class GridMap : MonoBehaviour {
     private PlayerController playerController;
     private List<GridObject> objectList;
 
-	private void Start () {
+	public void LoadLevel () {
         groundGrid = SampleLevelFloor();
         objectGrid = SampleObjectPosition();
         RenderGroundMap();
@@ -69,7 +71,7 @@ public class GridMap : MonoBehaviour {
                 if (groundGrid[i, j] == 0)
                 {
                     SpriteRenderer spriteRenderer = GameObject.Instantiate(groundTexture);
-                    spriteRenderer.transform.position = new Vector3(j * HorizontalSpacing, (HeightGrid- i) * VerticalSpacing, 0);
+                    spriteRenderer.transform.position = new Vector3(j * horizontalSpacing, (HeightGrid- i) * verticalSpacing, 0);
                     spriteRenderer.transform.SetParent(GroundLayer);
                 }
             }
@@ -91,16 +93,22 @@ public class GridMap : MonoBehaviour {
                 if (objectGrid[i, j] != 0)
                 {
                     SpriteRenderer spriteRenderer = GameObject.Instantiate(ObjectFactory.ObjectPrefab( objectGrid[i,j]));
-                    spriteRenderer.transform.position = new Vector3(j * HorizontalSpacing, (HeightGrid - i) * VerticalSpacing, 0);
+                    spriteRenderer.transform.position = new Vector3(j * horizontalSpacing, (HeightGrid - i) * verticalSpacing, 0);
                     GridObject gridObject = spriteRenderer.gameObject.AddComponent<GridObject>();
-                    gridObject.X = j;
-                    gridObject.Y = i;
+                    gridObject.x = j;
+                    gridObject.y = i;
                     objectList.Add(gridObject);
+                    //Add treat count to GameManager
+                    if (objectGrid[i,j] == 2)
+                    {
+                        gameManager.TreatsLeft += 1;
+                    }
+                    //For player remove from grid and assign its gridmap value
                     if(objectGrid[i,j] == 9)
                     {
                         objectGrid[i, j] = 0;
                         playerController = spriteRenderer.GetComponent<PlayerController>();
-                        playerController.GridMap = this;
+                        playerController.gridMap = this;
                         objectList.Remove(gridObject);
                     }
                 }
@@ -116,8 +124,8 @@ public class GridMap : MonoBehaviour {
     /// <param name="position"></param>
     public void DestroyObjectAt(Vector3 position)
     {
-        int x = Mathf.RoundToInt(position.x / HorizontalSpacing);
-        int y = (HeightGrid - Mathf.RoundToInt(position.y / VerticalSpacing));
+        int x = Mathf.RoundToInt(position.x / horizontalSpacing);
+        int y = (HeightGrid - Mathf.RoundToInt(position.y / verticalSpacing));
         DestroyObjectAt(x, y);
     }
 
@@ -128,12 +136,26 @@ public class GridMap : MonoBehaviour {
         bool objectDestroyed = false;
         for (int i = 0; i < objectList.Count; i++)
         {
-            if(objectList[i].X == x && objectList[i].Y == y)
+            if(objectList[i].x == x && objectList[i].y == y)
             {
+                //Check for a treat destroy
+                if (objectGrid[y, x] == 2)
+                {
+                    //Reduce treat count
+                    gameManager.TreatsLeft -= 1;
+                    //Check for win condition
+                    if(gameManager.TreatsLeft == 0)
+                    {
+                        gameManager.BeginWinGame();
+                    }
+                }
+
                 objectDestroyed = true;
                 objectList[i].gameObject.SetActive(false);
                 objectGrid[y, x] = 0;
                 position = i;
+              
+
                 break;
             }
         }
@@ -147,8 +169,8 @@ public class GridMap : MonoBehaviour {
     // Gets an objects value from a world position
     public int GetObjectValue(Vector3 position)
     {
-        int x = Mathf.RoundToInt(position.x / HorizontalSpacing);
-        int y = (HeightGrid- Mathf.RoundToInt(position.y / VerticalSpacing));
+        int x = Mathf.RoundToInt(position.x / horizontalSpacing);
+        int y = (HeightGrid- Mathf.RoundToInt(position.y / verticalSpacing));
         Debug.Log("X : " + x + "Y: " + y);
         return objectGrid[y, x]; //switch because x and y are inverted in matrix
     }

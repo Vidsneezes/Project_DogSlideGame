@@ -12,9 +12,9 @@ public enum PlayerState
 /// </summary>
 public class PlayerController : MonoBehaviour {
 
-    public float BaseForce;
-    public LayerMask CollisionMask;
-    public GridMap GridMap;
+    public float baseForce;
+    public LayerMask collisionMask;
+    public GridMap gridMap;
     private Vector3 velocity;
     private PlayerState playerState;
 
@@ -44,9 +44,9 @@ public class PlayerController : MonoBehaviour {
             }
         }else if(playerState == PlayerState.Moving)
         {
-            Vector3 deltaMovement = velocity * BaseForce * Time.deltaTime;
+            Vector3 deltaMovement = velocity * baseForce * Time.deltaTime;
             Vector3 displacedPosition = transform.position + deltaMovement + velocity * 1.28f;
-            int objectValue = GridMap.GetObjectValue(displacedPosition);
+            int objectValue = gridMap.GetObjectValue(displacedPosition);
 
             //has the player hit something
             if(objectValue == 1)
@@ -54,13 +54,13 @@ public class PlayerController : MonoBehaviour {
                 playerState = PlayerState.Waiting;
             }else if(objectValue == 2)
             {
-                GridMap.DestroyObjectAt(transform.position);
-                transform.Translate(velocity * BaseForce * Time.deltaTime);
+                gridMap.DestroyObjectAt(transform.position);
+                transform.Translate(velocity * baseForce * Time.deltaTime);
 
             }
             else if (objectValue == 0)
             {
-                transform.Translate(velocity * BaseForce * Time.deltaTime);
+                transform.Translate(velocity * baseForce * Time.deltaTime);
             }
             
         }
