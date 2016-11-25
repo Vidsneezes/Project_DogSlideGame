@@ -109,6 +109,7 @@ public class GridMap : MonoBehaviour {
                         objectGrid[i, j] = 0;
                         playerController = spriteRenderer.GetComponent<PlayerController>();
                         playerController.gridMap = this;
+                        gameManager.playerController = playerController;
                         objectList.Remove(gridObject);
                     }
                 }
