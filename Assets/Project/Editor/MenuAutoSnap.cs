@@ -5,6 +5,7 @@ using System.Collections;
 
 /// <summary>
 /// Editor Menu to snap all objects to 2.56 grid
+/// *Used for level editor
 /// </summary>
 public class MenuAutoSnap : MonoBehaviour {
 

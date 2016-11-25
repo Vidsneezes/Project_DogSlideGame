@@ -3,7 +3,8 @@ using System.Collections;
 
 /// <summary>
 /// Detector class for snaping to grid
-/// Look at Editor/MenuAutoSnap
+/// Look at Editor/MenuAutoSnap 
+/// **Used for level editor
 /// </summary>
 public class AutoSnapPosition : MonoBehaviour {
 
