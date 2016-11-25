@@ -4,14 +4,52 @@ using System.Collections.Generic;
 
 public class GridMap : MonoBehaviour {
 
+
+    public int WidthGrid
+    {
+        get
+        {
+            return widthGrid;
+        }
+        set
+        {
+            widthGrid = value;
+        }
+    }
+
+    public int HeightGrid
+    {
+        get
+        {
+            return heightGrid;
+        }
+        set
+        {
+            heightGrid = value;
+        }
+    }
     private int[,] groundGrid;
     private int[,] objectGrid;
+    private int widthGrid;
+    private int heightGrid;
 
 	// Use this for initialization
 	private void Start () {
         groundGrid = SampleLevelFloor();
         objectGrid = SampleObjectPosition();
 	}
+
+    private void RenderGroundMap()
+    {
+        SpriteRenderer groundTexture = ObjectFactory.SpawnGroundPrefab("Ground");
+        for (int i = 0; i < heightGrid; i++)
+        {
+            for (int j = 0; j < widthGrid; j++)
+            {
+
+            }
+        }
+    }
 	
 	// Update is called once per frame
 	private void Update () {
