@@ -15,18 +15,19 @@ public class PlayerController : MonoBehaviour {
     public float BaseForce;
     public LayerMask CollisionMask;
     public GridMap GridMap;
-    private Vector2 velocity;
+    private Vector3 velocity;
     private PlayerState playerState;
 
     private void Start () {
         playerState = PlayerState.Waiting;
-        velocity = Vector2.zero;
+        velocity = Vector3.zero;
 	}
 
     private void Update()
     {
         if (playerState == PlayerState.Waiting)
         {
+            //waiting for player input
             float horizontal = Input.GetAxis("Horizontal");
             float vertical = Input.GetAxis("Vertical");
             if (horizontal > 0 || horizontal < 0)
@@ -44,11 +45,18 @@ public class PlayerController : MonoBehaviour {
         }else if(playerState == PlayerState.Moving)
         {
             Vector3 deltaMovement = velocity * BaseForce * Time.deltaTime;
-            Vector3 displacedPosition = transform.position + deltaMovement;
+            Vector3 displacedPosition = transform.position + deltaMovement + velocity * 1.28f;
             int objectValue = GridMap.GetObjectValue(displacedPosition);
+
+            //has the player hit something
             if(objectValue == 1)
             {
                 playerState = PlayerState.Waiting;
+            }else if(objectValue == 2)
+            {
+                GridMap.DestroyObjectAt(transform.position);
+                transform.Translate(velocity * BaseForce * Time.deltaTime);
+
             }
             else if (objectValue == 0)
             {

@@ -50,6 +50,7 @@ public class GridMap : MonoBehaviour {
     private int[,] groundGrid;
     private int[,] objectGrid;
     private PlayerController playerController;
+    private List<GridObject> objectList;
 
 	private void Start () {
         groundGrid = SampleLevelFloor();
@@ -75,8 +76,14 @@ public class GridMap : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Places objects on map
+    /// Uses a matrix as the level
+    /// Runs once at start of Level
+    /// </summary>
     private void PopulateMap()
     {
+        objectList = new List<GridObject>();
         for (int i = 0; i < HeightGrid; i++)
         {
             for (int j = 0; j < WidthGrid; j++)
@@ -85,15 +92,55 @@ public class GridMap : MonoBehaviour {
                 {
                     SpriteRenderer spriteRenderer = GameObject.Instantiate(ObjectFactory.ObjectPrefab( objectGrid[i,j]));
                     spriteRenderer.transform.position = new Vector3(j * HorizontalSpacing, (HeightGrid - i) * VerticalSpacing, 0);
+                    GridObject gridObject = spriteRenderer.gameObject.AddComponent<GridObject>();
+                    gridObject.X = j;
+                    gridObject.Y = i;
+                    objectList.Add(gridObject);
                     if(objectGrid[i,j] == 9)
                     {
                         objectGrid[i, j] = 0;
                         playerController = spriteRenderer.GetComponent<PlayerController>();
                         playerController.GridMap = this;
+                        objectList.Remove(gridObject);
                     }
                 }
 
             }
+        }
+    }
+
+
+    /// <summary>
+    /// Use to destroy objects such as dog treats and other collectables
+    /// </summary>
+    /// <param name="position"></param>
+    public void DestroyObjectAt(Vector3 position)
+    {
+        int x = Mathf.RoundToInt(position.x / HorizontalSpacing);
+        int y = (HeightGrid - Mathf.RoundToInt(position.y / VerticalSpacing));
+        DestroyObjectAt(x, y);
+    }
+
+    private void DestroyObjectAt(int x, int y)
+    {
+        Debug.Log("Hit Destructable");
+        int position = 0;
+        bool objectDestroyed = false;
+        for (int i = 0; i < objectList.Count; i++)
+        {
+            if(objectList[i].X == x && objectList[i].Y == y)
+            {
+                objectDestroyed = true;
+                objectList[i].gameObject.SetActive(false);
+                objectGrid[y, x] = 0;
+                position = i;
+                break;
+            }
+        }
+
+        if(objectDestroyed == true)
+        {
+            objectList.RemoveAt(position);
         }
     }
 
