@@ -58,7 +58,7 @@ public class GridMap : MonoBehaviour {
 
     private void RenderGroundMap()
     {
-        SpriteRenderer groundTexture = ObjectFactory.SpawnGroundPrefab("GroundTexture");
+        SpriteRenderer groundTexture = ObjectFactory.GroundPrefab("GroundTexture");
         for (int i = 0; i < HeightGrid; i++)
         {
             for (int j = 0; j < WidthGrid; j++)
@@ -72,7 +72,23 @@ public class GridMap : MonoBehaviour {
             }
         }
     }
-	
+
+    private void PopulateMap()
+    {
+        for (int i = 0; i < HeightGrid; i++)
+        {
+            for (int j = 0; j < WidthGrid; j++)
+            {
+                if (objectGrid[i, j] != 0)
+                {
+                    SpriteRenderer spriteRenderer = GameObject.Instantiate(ObjectFactory.ObjectPrefab( objectGrid[i,j]));
+                    spriteRenderer.transform.position = new Vector3(j * HorizontalSpacing, (HeightGrid - i) * VerticalSpacing, 0);
+                    spriteRenderer.transform.SetParent(GroundLayer);
+                }
+            }
+        }
+    }
+
     private int[,] SampleLevelFloor()
     {
         /*
