@@ -4,13 +4,13 @@ using System.Collections.Generic;
 
 public class GridMap : MonoBehaviour {
 
-    private int[,] groundFloor;
-    private int[,] objects;
+    private int[,] groundGrid;
+    private int[,] objectGrid;
 
 	// Use this for initialization
 	private void Start () {
-        groundFloor = SampleLevelFloor();
-        objects = SampleObjectPosition();
+        groundGrid = SampleLevelFloor();
+        objectGrid = SampleObjectPosition();
 	}
 	
 	// Update is called once per frame
