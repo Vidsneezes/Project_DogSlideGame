@@ -5,6 +5,24 @@ using System.Collections.Generic;
 public class GridMap : MonoBehaviour {
 
 
+    public float HorizontalSpacing;
+    public float VerticalSpacing;
+
+    private Transform groundLayer;
+    public Transform GroundLayer
+    {
+        get
+        {
+            if(groundLayer == null)
+            {
+                groundLayer = new GameObject("GroundLayer").transform;
+                groundLayer.SetParent(transform);
+            }
+            return groundLayer;
+        }
+    }
+
+    private int widthGrid;
     public int WidthGrid
     {
         get
@@ -17,6 +35,7 @@ public class GridMap : MonoBehaviour {
         }
     }
 
+    private int heightGrid;
     public int HeightGrid
     {
         get
@@ -30,48 +49,46 @@ public class GridMap : MonoBehaviour {
     }
     private int[,] groundGrid;
     private int[,] objectGrid;
-    private int widthGrid;
-    private int heightGrid;
 
-	// Use this for initialization
 	private void Start () {
         groundGrid = SampleLevelFloor();
         objectGrid = SampleObjectPosition();
+        RenderGroundMap();
 	}
 
     private void RenderGroundMap()
     {
-        SpriteRenderer groundTexture = ObjectFactory.SpawnGroundPrefab("Ground");
-        for (int i = 0; i < heightGrid; i++)
+        SpriteRenderer groundTexture = ObjectFactory.SpawnGroundPrefab("GroundTexture");
+        for (int i = 0; i < HeightGrid; i++)
         {
-            for (int j = 0; j < widthGrid; j++)
+            for (int j = 0; j < WidthGrid; j++)
             {
-
+                if (groundGrid[i, j] == 0)
+                {
+                    SpriteRenderer spriteRenderer = GameObject.Instantiate(groundTexture);
+                    spriteRenderer.transform.position = new Vector3(j * HorizontalSpacing, (HeightGrid- i) * VerticalSpacing, 0);
+                    spriteRenderer.transform.SetParent(GroundLayer);
+                }
             }
         }
     }
 	
-	// Update is called once per frame
-	private void Update () {
-	
-	}
-
-
     private int[,] SampleLevelFloor()
     {
         /*
        0 - ground
        -1 - empty
        */
-
-        int[,] grid = new int[,] {
+        WidthGrid = 7;
+        HeightGrid = 5;
+        int[,] grid = new int[5,7] {
             {0,0,0,0,0,0,0 },
             {0,0,0,0,0,0,0 },
             {0,0,0,0,0,0,0 },
             {0,0,0,0,0,0,-1 },
             {0,0,0,0,0,0,-1 },
         };
-
+       
         return grid;
     }
 
