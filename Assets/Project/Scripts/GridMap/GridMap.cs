@@ -49,11 +49,13 @@ public class GridMap : MonoBehaviour {
     }
     private int[,] groundGrid;
     private int[,] objectGrid;
+    private PlayerController playerController;
 
 	private void Start () {
         groundGrid = SampleLevelFloor();
         objectGrid = SampleObjectPosition();
         RenderGroundMap();
+        PopulateMap();
 	}
 
     private void RenderGroundMap()
@@ -83,10 +85,25 @@ public class GridMap : MonoBehaviour {
                 {
                     SpriteRenderer spriteRenderer = GameObject.Instantiate(ObjectFactory.ObjectPrefab( objectGrid[i,j]));
                     spriteRenderer.transform.position = new Vector3(j * HorizontalSpacing, (HeightGrid - i) * VerticalSpacing, 0);
-                    spriteRenderer.transform.SetParent(GroundLayer);
+                    if(objectGrid[i,j] == 9)
+                    {
+                        objectGrid[i, j] = 0;
+                        playerController = spriteRenderer.GetComponent<PlayerController>();
+                        playerController.GridMap = this;
+                    }
                 }
+
             }
         }
+    }
+
+    // Gets an objects value from a world position
+    public int GetObjectValue(Vector3 position)
+    {
+        int x = Mathf.RoundToInt(position.x / HorizontalSpacing);
+        int y = (HeightGrid- Mathf.RoundToInt(position.y / VerticalSpacing));
+        Debug.Log("X : " + x + "Y: " + y);
+        return objectGrid[y, x]; //switch because x and y are inverted in matrix
     }
 
     private int[,] SampleLevelFloor()

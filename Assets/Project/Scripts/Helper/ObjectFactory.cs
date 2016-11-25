@@ -6,8 +6,8 @@ public class ObjectFactory : MonoBehaviour {
 
     private static Dictionary<int, string> ObjectMap = new Dictionary<int, string>()
     {
-        {0,"Wheels" },
-        {1,"DogTreat" },
+        {1,"Wheels" },
+        {2,"DogTreat" },
         {9,"Player" }
     };
 

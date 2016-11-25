@@ -13,14 +13,13 @@ public enum PlayerState
 public class PlayerController : MonoBehaviour {
 
     public float BaseForce;
-    public LayerMask collisionMask;
-    private Rigidbody2D rigidBody2d;
+    public LayerMask CollisionMask;
+    public GridMap GridMap;
     private Vector2 velocity;
     private PlayerState playerState;
 
     private void Start () {
         playerState = PlayerState.Waiting;
-        rigidBody2d = GetComponent<Rigidbody2D>();
         velocity = Vector2.zero;
 	}
 
@@ -44,19 +43,20 @@ public class PlayerController : MonoBehaviour {
             }
         }else if(playerState == PlayerState.Moving)
         {
-            RaycastHit2D hit = Physics2D.Raycast(rigidBody2d.position, velocity, 1.28f, collisionMask);
-            if(hit.collider != null)
+            Vector3 deltaMovement = velocity * BaseForce * Time.deltaTime;
+            Vector3 displacedPosition = transform.position + deltaMovement;
+            int objectValue = GridMap.GetObjectValue(displacedPosition);
+            if(objectValue == 1)
             {
                 playerState = PlayerState.Waiting;
-                rigidBody2d.MovePosition(rigidBody2d.position - velocity * BaseForce * Time.deltaTime);
-                velocity = Vector2.zero;
             }
+            else if (objectValue == 0)
+            {
+                transform.Translate(velocity * BaseForce * Time.deltaTime);
+            }
+            
         }
-        
     }
 
-    private void FixedUpdate()
-    {
-        rigidBody2d.MovePosition(rigidBody2d.position + velocity * BaseForce * Time.deltaTime);
-    }
+  
 }
